@@ -180,34 +180,29 @@ public class Agent {
 
             writer.println("  )");
 
-            // Objectif à ajouter à l'étape suivante
-writer.println("  (:goal");
-writer.println("    (and");
+            // Objectif : chaque boîte doit atteindre une destination.
+            writer.println("  (:goal");
+            writer.println("    (and");
 
-for (int i = 0; i < boxCount; i++) {
-    writer.println("      (or");
+            int boxIndex = 0;
 
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            if (map[y][x] == '*') {
-                writer.println(
-                    "        (at-box box" + i + " pos_" + x + "_" + y + ")"
-                );
+            for (int y = 0; y < height && boxIndex < boxCount; y++) {
+                for (int x = 0; x < width && boxIndex < boxCount; x++) {
+                    if (map[y][x] == '*' || map[y][x] =='*') {
+                        writer.println(
+                            "      (at-box box" + boxIndex
+                            + " pos_" + x + "_" + y + ")"
+                        );
+                        boxIndex++;
+                    }
+                }
             }
-        }
-    }
 
-    writer.println("      )");
-}
-
-writer.println("    )");
-writer.println("  )");
-writer.println(")");
-                 
-
-          
-
-            System.err.println("Problème PDDL généré : " + problemFile);
+            writer.println("    )");
+            writer.println("  )");
+            writer.println(")");
+                            
+            System.out.println("Problème PDDL généré : " + problemFile);
 
         } catch (IOException e) {
             System.err.println("Erreur lors de la génération du problème PDDL.");

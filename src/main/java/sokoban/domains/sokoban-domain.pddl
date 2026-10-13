@@ -37,9 +37,9 @@
         :effect (and
             (not (at-position ?g ?guard-pos))
             (at-position ?g ?box-pos)
+            (clear ?guard-pos)
             (not (at-box ?b ?box-pos))
             (at-box ?b ?to)
-            (clear ?box-pos)
             (not (clear ?to))
         )
     )
@@ -56,6 +56,8 @@
         :effect (and
             (not (at-position ?g ?from))
             (at-position ?g ?to)
+            (clear ?from)
+            (not (clear ?to))
         )
     )
 )
