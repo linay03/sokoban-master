@@ -45,6 +45,9 @@ public class Agent {
         );
     }
 
+    /**
+     * Cette fonction permet d'écrire un fichier problem .pddl en prenant le contenu d'un test
+     */
     public static void createPDDLProblemFile(
         String problemFile,
         int width,
@@ -69,7 +72,7 @@ public class Agent {
             // Joueur
             writer.println("    guard - guard");
 
-            // Positions accessibles
+            // Positions
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (map[y][x] != '#') {
@@ -116,16 +119,16 @@ public class Agent {
                         continue;
                     }
 
-                    boolean boxPresent = false;
+                    boolean isBoxPresent = false;
 
                     for (int i = 0; i < boxCount; i++) {
                         if (boxes[i][0] == x && boxes[i][1] == y) {
-                            boxPresent = true;
+                            isBoxPresent = true;
                             break;
                         }
                     }
 
-                    if (!boxPresent) {
+                    if (!isBoxPresent) {
                         writer.println(
                             "    (clear pos_" + x + "_" + y + ")"
                         );
@@ -180,7 +183,7 @@ public class Agent {
 
             writer.println("  )");
 
-            // Objectif : chaque boîte doit atteindre une destination.
+            // Goal
             writer.println("  (:goal");
             writer.println("    (and");
 
@@ -188,7 +191,7 @@ public class Agent {
 
             for (int y = 0; y < height && boxIndex < boxCount; y++) {
                 for (int x = 0; x < width && boxIndex < boxCount; x++) {
-                    if (map[y][x] == '*' || map[y][x] =='*') {
+                    if (map[y][x] == '*' || map[y][x] =='.') {
                         writer.println(
                             "      (at-box box" + boxIndex
                             + " pos_" + x + "_" + y + ")"
