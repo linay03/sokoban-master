@@ -1,12 +1,27 @@
 package sokoban;
 
+//imports de base
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+//+ pddl4j et le printstream
+import fr.uga.pddl4j.heuristics.state.StateHeuristic;
+import fr.uga.pddl4j.parser.DefaultParsedProblem;
+import fr.uga.pddl4j.parser.ErrorManager;
+import fr.uga.pddl4j.parser.Message;
+import fr.uga.pddl4j.parser.Parser;
+import fr.uga.pddl4j.plan.Plan;
+import fr.uga.pddl4j.planners.LogLevel;
+import fr.uga.pddl4j.planners.statespace.HSP;
+import fr.uga.pddl4j.problem.Problem;
+import fr.uga.pddl4j.problem.operator.Action;
+import java.io.PrintStream;
+
 public class Agent {
 
-    private static final String PROBLEM_FILE =
-        "src/main/java/sokoban/domains/sokoban-problem.pddl";
+    private static final String PROBLEM_FILE = "src/main/java/sokoban/domains/sokoban-problem.pddl";
+    private static final int PLANNER_TIMEOUT_SECONDS = 8;
+    private static final double HEURISTIC_WEIGHT = 1.2;
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -210,6 +225,83 @@ public class Agent {
         } catch (IOException e) {
             System.err.println("Erreur lors de la génération du problème PDDL.");
             e.printStackTrace();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    //résout le problème en utilisant pddl4j
+    //+ convertis pour l'interface
+    private static String solveWithPDDL4J() {
+        PrintStream realOut = System.out;
+        System.setOut(System.err);
+
+        Thread.currentThread().setContextClassLoader(Agent.class.getClassLoader());
+
+        try {
+            //paramètres hsp
+            HSP planner = new HSP();
+            planner.setLogLevel(LogLevel.OFF);
+            planner.setTimeout(PLANNER_TIMEOUT_SECONDS);
+            planner.setHeuristic(StateHeuristic.Name.FAST_FORWARD);
+            planner.setHeuristicWeight(HEURISTIC_WEIGHT);
+
+            //instanciation parser
+            Parser parser = new Parser();
+            DefaultParsedProblem parsedProblem = parser.parse(DOMAIN_FILE, PROBLEM_FILE);
+
+            //récupérer les erreurs potentielles
+            ErrorManager errors = parser.getErrorManager();
+            if (!errors.getMessages(Message.Type.LEXICAL_ERROR).isEmpty() || !errors.getMessages(Message.Type.PARSER_ERROR).isEmpty()) {
+                for (Message m : errors.getMessages()) {
+                    System.err.println(m);
+                }
+                return null;
+            }
+
+            //instanciation problème
+            Problem problem = planner.instantiate(parsedProblem);
+            if (problem == null) {
+                return null;
+            }
+
+            //instanciation solver
+            Plan plan = planner.solve(problem);
+            if (plan == null) {
+                return null;
+            }
+
+            //conversion en UDLR
+            StringBuilder moves = new StringBuilder();
+
+            //pour chaque action on récupère les tokens
+            for (Action action : plan.actions()) {
+                String[] tokens = problem.toShortString(action).replace("(", "").replace(")", "").trim().split("\\s+");
+
+                char dir = 0;
+                //tokens[0] = nom de l'action. on cherche les tokens u, d, l, ou r 
+                for (int i = 1; i < tokens.length; i++) {
+                    String t = tokens[i];
+                    if (t.length() == 1 && "udlr".indexOf(Character.toLowerCase(t.charAt(0))) >= 0) {
+                        dir = Character.toUpperCase(t.charAt(0));
+                        break;
+                    }
+                }
+
+                if (dir == 0) {
+                    System.err.println("[ERROR] direction introuvable dans : "
+                            + problem.toShortString(action));
+                    return null;
+                }
+                moves.append(dir);
+            }
+
+            return moves.toString();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            System.setOut(realOut);
         }
     }
 }
