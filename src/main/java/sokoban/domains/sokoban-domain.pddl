@@ -2,62 +2,45 @@
     (:requirements :strips :typing)
     (:types
         box
-        guard
         position 
         direction
     )
     (:predicates
-        (at-position ?g - guard ?pos - position)
-        (at-box ?b - box ?pos - position)
-        (destination ?pos - position)
-        (adjacent ?from ?to - position) ;; True if position ?from is adjacent to position ?to
-        (clear ?pos - position)
-        (next-move ?from - position ?to - position ?d - direction)
-    )
-
-    (:action move-box
-        :parameters (?b - box 
-        ?g - guard 
-        ?guard-pos - position 
-        ?box-pos - position 
-        ?to - position 
-        ?dir - direction
-        )
-
-        :precondition (and
-            (at-position ?g ?guard-pos)
-            (at-box ?b ?box-pos)
-            (adjacent ?guard-pos ?box-pos)
-            (adjacent ?box-pos ?to)
-            (next-move ?guard-pos ?box-pos ?dir) ;; Player is able to move the box in a certain direction
-            (next-move ?box-pos ?to ?dir)
-            (clear ?to)
-        )
-
-        :effect (and
-            (not (at-position ?g ?guard-pos))
-            (at-position ?g ?box-pos)
-            (clear ?guard-pos)
-            (not (at-box ?b ?box-pos))
-            (at-box ?b ?to)
-            (not (clear ?to))
-        )
+        (adjacent ?from ?to - position ?d - direction) ; True if position ?to is adjacent to position ?from in direction ?d
+        (clear ?pos - position) ;; True if position ?pos is clear (no box or guard)
+        (guard-at ?g - guard ?pos - position) ; position of the guard
+        (box-at ?b - box ?pos - position); position of the box
     )
 
     (:action move-player
-        :parameters (?g - guard ?from - position ?to - position ?d - direction)
-        :precondition(and
-            (at-position ?g ?from)
-            (adjacent ?from ?to)
-            (clear ?to)
-            (next-move ?from ?to ?d)
+        :parameters (?from ?to - position ?d - direction)
+
+        :precondition (and
+            (guard-at ?from) ; there is a guard at the current position
+            (adjacent ?from ?to ?d) ; the target position is adjacent to the current position in direction ?d
+            (clear ?to) ; the target position is clear (no box or guard)
         )
 
         :effect (and
-            (not (at-position ?g ?from))
-            (at-position ?g ?to)
-            (clear ?from)
-            (not (clear ?to))
+            (not (guard-at ?from)) ; remove the guard from the current position
+            (box-at ?to) ; place the box at the new position
+            (not (clear ?to)) ; mark the new position as not clear
+            (guard-at ?to)
+            )
+    )
+
+    (:action move-box
+        :parameters (?guard-from ?box-from ?box-to - position ?d-guard ?d-box - direction)
+        :precondition(and
+            (adjacent ?guard-from ?box-from ?d-guard) ; the guard is adjacent to the box in direction ?d-guard
+            (adjacent ?box-from ?box-to ?d-box) ; the box is adjacent to the target position in direction ?d-box
+            (clear ?box-to) ; the target position for the box is clear
+        )
+
+        :effect (and
+            (clear ?guard-from) ; mark the guard's previous position as clear
+            (not (box-at ?box-from)) ; remove the box from its previous position
+            (box-at ?box-to) ; move the box to the new position
         )
     )
 )
