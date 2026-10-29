@@ -8,8 +8,8 @@
     (:predicates
         (adjacent ?from ?to - position ?d - direction) ; True if position ?to is adjacent to position ?from in direction ?d
         (clear ?pos - position) ;; True if position ?pos is clear (no box or guard)
-        (guard-at ?g - guard ?pos - position) ; position of the guard
-        (box-at ?b - box ?pos - position); position of the box
+        (guard-at ?pos - position) ; position of the guard
+        (box-at ?pos - position); position of the box
     )
 
     (:action move-player
