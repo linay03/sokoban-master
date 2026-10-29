@@ -24,8 +24,41 @@ public class Agent {
     private static final double HEURISTIC_WEIGHT = 1.2;
 
     public static void main(String[] args) {
+        //instanciation de scanner
         Scanner input = new Scanner(System.in);
-        convertCurrentLevelToPDDLProblem(input);
+        //convertCurrentLevelToPDDLProblem doit retourner un boxCount!!!!! @alkalain
+        int boxCount = convertCurrentLevelToPDDLProblem(input);
+
+        //on récupère nos tokens
+        String moves = solveWithPDDL4J();
+
+        //au cas où pas de solution n'a été trouvée
+        if (moves == null) {
+            System.err.println("[ERROR] no plan found");
+            System.out.println("X");
+            System.out.flush();
+            return;
+        }
+
+        //on print le string solution en entier pour que l'utilisateur le voie
+        //important!! dans les logs!!!! sinon ça part dans le jeu
+        System.err.println("[PLAN] " + moves.length() + " moves: " + moves);
+
+        //et pour chaque token on l'envoie dans la console
+        //où il sera lu et exécuté dans le jeu
+        for (int i = 0; i < moves.length(); i++) {
+            System.out.println(moves.charAt(i));
+            System.out.flush();
+
+            //si on est pas encore à la fin de la liste
+            if (i + 1 < moves.length()) {
+                for (int k = 0; k <= boxCount; k++) {
+                    //un pour chaque coordonnée x y
+                    input.nextInt();
+                    input.nextInt();
+                }
+            }
+        }
     }
 
     public static void convertCurrentLevelToPDDLProblem(Scanner input) {
