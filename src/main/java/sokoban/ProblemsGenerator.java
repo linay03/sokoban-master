@@ -129,6 +129,7 @@ public class ProblemsGenerator {
         char[][] map = new char[height][width];
         List<int[]> boxes = new ArrayList<>();
         List<int[]> targets = new ArrayList<>();
+        // -1 value indicates that the player has not been positioned yet.
         int playerX = -1;
         int playerY = -1;
 
@@ -167,27 +168,27 @@ public class ProblemsGenerator {
             );
         }
 
-        StringBuilder pddl = new StringBuilder();
-        pddl.append("(define (problem ").append(problemName).append(")\n");
-        pddl.append("  (:domain Sokoban)\n");
-        pddl.append("  (:objects\n");
+        StringBuilder ProblemeContent = new StringBuilder();
+        ProblemeContent.append("(define (problem ").append(problemName).append(")\n");
+        ProblemeContent.append("  (:domain Sokoban)\n");
+        ProblemeContent.append("  (:objects\n");
         for (int i = 0; i < boxes.size(); i++) {
-            pddl.append("    box").append(i).append(" - box\n");
+            ProblemeContent.append("    box").append(i).append(" - box\n");
         }
-        pddl.append("    U D L R - direction\n");
+        ProblemeContent.append("    U D L R - direction\n");
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (map[y][x] != '#') {
-                    pddl.append("    ").append(position(x, y)).append(" - position\n");
+                    ProblemeContent.append("    ").append(position(x, y)).append(" - position\n");
                 }
             }
         }
-        pddl.append("  )\n");
-        pddl.append("  (:init\n");
-        pddl.append("    (guard-at ").append(position(playerX, playerY)).append(")\n");
+        ProblemeContent.append("  )\n");
+        ProblemeContent.append("  (:init\n");
+        ProblemeContent.append("    (guard-at ").append(position(playerX, playerY)).append(")\n");
         for (int i = 0; i < boxes.size(); i++) {
             int[] box = boxes.get(i);
-            pddl.append("    (box-at ").append(position(box[0], box[1])).append(")\n");
+            ProblemeContent.append("    (box-at ").append(position(box[0], box[1])).append(")\n");
         }
 
         int[][] offsets = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
@@ -198,30 +199,30 @@ public class ProblemsGenerator {
                     continue;
                 }
                 if (!isOccupied(x, y, playerX, playerY, boxes)) {
-                    pddl.append("    (clear ").append(position(x, y)).append(")\n");
+                    ProblemeContent.append("    (clear ").append(position(x, y)).append(")\n");
                 }
                 for (int i = 0; i < offsets.length; i++) {
                     int nextX = x + offsets[i][0];
                     int nextY = y + offsets[i][1];
                     if (nextX >= 0 && nextX < width && nextY >= 0 && nextY < height
                             && map[nextY][nextX] != '#') {
-                        pddl.append("    (adjacent ").append(position(x, y)).append(' ')
+                        ProblemeContent.append("    (adjacent ").append(position(x, y)).append(' ')
                             .append(position(nextX, nextY)).append(' ').append(directions[i])
                             .append(")\n");
                     }
                 }
             }
         }
-        pddl.append("  )\n");
-        pddl.append("  (:goal\n");
-        pddl.append("    (and\n");
+        ProblemeContent.append("  )\n");
+        ProblemeContent.append("  (:goal\n");
+        ProblemeContent.append("    (and\n");
         for (int[] target : targets) {
-            pddl.append("      (box-at ").append(position(target[0], target[1])).append(")\n");
+            ProblemeContent.append("      (box-at ").append(position(target[0], target[1])).append(")\n");
         }
-        pddl.append("    )\n");
-        pddl.append("  )\n");
-        pddl.append(")\n");
-        return pddl.toString();
+        ProblemeContent.append("    )\n");
+        ProblemeContent.append("  )\n");
+        ProblemeContent.append(")\n");
+        return ProblemeContent.toString();
     }
 
     /** Checks if a position is occupied by the player or any box.
