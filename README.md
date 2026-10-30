@@ -14,6 +14,13 @@ mvn install:install-file \
  ```  
 Work with maven: mvn clean, mvn compile, mvn test, mvn package
 
+Generate PDDL problem files for tests 1-10 from the repository root:
+```sh
+mvn -q -DskipTests compile
+java -cp target/classes sokoban.ProblemsGenerator
+```
+The files are written to `src/main/java/sokoban/problems/problem-testN.pddl`.
+
 Run with: 
 ````
 java --add-opens java.base/java.lang=ALL-UNNAMED \
