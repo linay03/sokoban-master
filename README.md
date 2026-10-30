@@ -15,6 +15,7 @@ mvn install:install-file \
 Work with maven: mvn clean, mvn compile, mvn test, mvn package
 
 Generate PDDL problem files for tests 1-10 from the repository root:
+NB : This command is optional since Agent.java will do the same task it self.
 ```sh
 mvn -q -DskipTests compile
 java -cp target/classes sokoban.ProblemsGenerator
