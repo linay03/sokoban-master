@@ -10,7 +10,7 @@ public class Agent {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        ProblemsGenerator.getAllProblems();
+        ProblemsGenerator.getAllProblems(); // Generate problems before running the agent
     }
 
 }

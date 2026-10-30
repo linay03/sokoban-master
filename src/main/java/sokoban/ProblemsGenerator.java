@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ * Generates PDDL problems for the Sokoban domain.
+ */
 public class ProblemsGenerator {
 
     private static final String TEST_DIRECTORY = "config/";
@@ -42,13 +45,20 @@ public class ProblemsGenerator {
             System.out.println("Generated: " + problemFile);
         }
     }
-
+    /** Extracts the testIn field from a JSON string.
+     * @param json The JSON string.
+     * @return The unescaped testIn string, or null if not found.
+    */
     private static String extractTestIn(String json) {
         Pattern pattern = Pattern.compile("\"testIn\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(json);
         return matcher.find() ? unescapeJsonString(matcher.group(1)) : null;
     }
 
+    /** Unescapes a JSON string.
+     * @param value The JSON string to unescape.
+     * @return The unescaped string.
+     */
     private static String unescapeJsonString(String value) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < value.length(); i++) {
@@ -97,6 +107,11 @@ public class ProblemsGenerator {
         return result.toString();
     }
 
+    /** Creates a PDDL problem from a Sokoban grid.
+     * @param testIn The Sokoban grid as a string.
+     * @param problemName The name of the problem.
+     * @return The PDDL problem as a string.
+     */
     private static String createProblem(String testIn, String problemName) {
         String[] lines = testIn.split("\\r?\\n", -1);
         int height = lines.length;
@@ -209,6 +224,14 @@ public class ProblemsGenerator {
         return pddl.toString();
     }
 
+    /** Checks if a position is occupied by the player or any box.
+     * @param x The x-coordinate of the position.
+     * @param y The y-coordinate of the position.
+     * @param playerX The x-coordinate of the player.
+     * @param playerY The y-coordinate of the player.
+     * @param boxes A list of box positions, each represented as an int array [x, y].
+     * @return True if the position is occupied, false otherwise.
+    */
     private static boolean isOccupied(int x, int y, int playerX, int playerY, List<int[]> boxes) {
         if (x == playerX && y == playerY) {
             return true;
