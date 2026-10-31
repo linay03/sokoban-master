@@ -75,19 +75,9 @@ public class Agent {
             }
         }
 
-        System.err.println("===== CARTE REÇUE PAR AGENT =====");
-
-        for (int y = 0; y < height; y++) {
-            System.err.println("[" + new String(map[y]) + "]");
-        }
-
-        System.err.println("=================================");
-
-        // Lire la position du joueur.
         int playerX = input.nextInt();
         int playerY = input.nextInt();
 
-        // Lire les positions des boîtes.
         int[][] boxes = new int[boxCount][2];
 
         for (int i = 0; i < boxCount; i++) {
@@ -95,7 +85,6 @@ public class Agent {
             boxes[i][1] = input.nextInt();
         }
 
-        // Générer le problème PDDL.
         createPDDLProblemFile(
                 PROBLEM_FILE,
                 width,
