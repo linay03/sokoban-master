@@ -30,14 +30,14 @@ public class Agent {
         int boxCount = convertCurrentLevelToPDDLProblem(input);
         String moves = solveWithPDDL4J();
         if (moves == null) {
-            System.err.println("[ERROR] No plan found");
+            System.err.println("No plan found");
             System.out.println("X");
             System.out.flush();
             return;
         }
 
         System.err.println(
-                "[PLAN] " + moves.length() + " moves: " + moves
+                "Plan:" + moves.length() + " moves:" + moves
         );
 
         for (int i = 0; i < moves.length(); i++) {
@@ -45,16 +45,17 @@ public class Agent {
             System.out.flush();
             if (i + 1 < moves.length()) {
                 for (int k = 0; k <= boxCount; k++) {
-                    input.nextInt(); // x
-                    input.nextInt(); // y
+                    //x
+                    input.nextInt();
+                    //y
+                    input.nextInt();
                 }
             }
         }
     }
 
     /**
-     * Lit le niveau courant depuis l'entrée du jeu,
-     * puis génère le fichier problem PDDL correspondant.
+     * Lit le niveau courant depuis l'entrée du jeu puis génère le fichier problem PDDL correspondant
      *
      * @return le nombre de boîtes du niveau
      */
@@ -137,7 +138,7 @@ public class Agent {
 
             writer.println("  (:init");
 
-            // Player position
+            //Player position
             writer.println(
                     "    (guard-at pos_" + playerX + "_" + playerY + ")"
             );
@@ -149,7 +150,7 @@ public class Agent {
                 );
             }
 
-            // Destinations
+            //Destinations
             int destinationCount = 0;
 
             for (int y = 0; y < height; y++) {
@@ -166,7 +167,7 @@ public class Agent {
                 }
             }
 
-            // Free cells
+            //Free cells
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
 
@@ -176,7 +177,7 @@ public class Agent {
 
                     boolean occupied = false;
 
-                    // Vérifier la position du joueur.
+                    //Vérifier la position du joueur.
                     if (playerX == x && playerY == y) {
                         occupied = true;
                     }
@@ -233,7 +234,7 @@ public class Agent {
 
             writer.println("  )");
 
-            // Goal
+            //Goal
             writer.println("  (:goal");
             writer.println("    (and");
 
@@ -255,7 +256,7 @@ public class Agent {
 
         } catch (IOException e) {
             System.err.println(
-                    "Erreur lors de la génération du problème PDDL."
+                    "Erreur lors de la génération du problème"
             );
             e.printStackTrace();
         }
@@ -282,7 +283,7 @@ public class Agent {
     }
 
     /**
-     * Résout le problème avec PDDL4J et convertit le plan en U, D, L, R.
+     * Résout le problème avec PDDL4J et convertit le plan en U, D, L, R
      */
     private static String solveWithPDDL4J() {
 
@@ -316,19 +317,14 @@ public class Agent {
                 return null;
             }
 
-            System.err.println("[DEBUG] Parsing terminé.");
             Problem problem = planner.instantiate(parsedProblem);
-            System.err.println("[DEBUG] Instanciation réussie.");
 
             Plan plan = planner.solve(problem);
 
             if (plan == null) {
-                System.err.println("[ERROR] Aucun plan trouvé.");
+                System.err.println("Aucun plan trouvé");
                 return null;
             }
-
-            System.err.println("[DEBUG] Plan trouvé !");
-            System.err.println("[DEBUG] Nombre d'actions : " + plan.size());
 
             StringBuilder moves = new StringBuilder();
 
@@ -336,8 +332,6 @@ public class Agent {
                 String actionString = problem.toShortString(action);
                 char dir = extractDirection(actionString);
                 moves.append(dir);
-                System.err.println("[DEBUG] Action PDDL : " + actionString);
-                System.err.println("[DEBUG] Direction extraite : " + dir);
             }
             return moves.toString();
 
