@@ -35,14 +35,14 @@
     (:action move-box
         :parameters (
             ?guard-from ?box-from ?box-to - position
-            ?d-guard ?d-box - direction
+            ?d - direction
         )
 
         :precondition (and
             (guard-at ?guard-from)
             (box-at ?box-from)
-            (adjacent ?guard-from ?box-from ?d-guard)
-            (adjacent ?box-from ?box-to ?d-box)
+            (adjacent ?guard-from ?box-from ?d)
+            (adjacent ?box-from ?box-to ?d)
             (clear ?box-to)
         )
 

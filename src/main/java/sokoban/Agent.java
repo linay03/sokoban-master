@@ -27,13 +27,8 @@ public class Agent {
     public static void main(String[] args) {
 
         Scanner input = new Scanner(System.in);
-
-        // Lire le niveau courant et générer son problème PDDL.
         int boxCount = convertCurrentLevelToPDDLProblem(input);
-
-        // Résoudre le problème PDDL.
         String moves = solveWithPDDL4J();
-
         if (moves == null) {
             System.err.println("[ERROR] No plan found");
             System.out.println("X");
@@ -41,17 +36,13 @@ public class Agent {
             return;
         }
 
-        // Afficher le plan uniquement dans les logs.
         System.err.println(
                 "[PLAN] " + moves.length() + " moves: " + moves
         );
 
-        // Envoyer les actions au jeu une par une.
         for (int i = 0; i < moves.length(); i++) {
-
             System.out.println(moves.charAt(i));
             System.out.flush();
-
             if (i + 1 < moves.length()) {
                 for (int k = 0; k <= boxCount; k++) {
                     input.nextInt(); // x
@@ -74,9 +65,7 @@ public class Agent {
         int boxCount = input.nextInt();
 
         input.nextLine();
-
         char[][] map = new char[height][width];
-
         for (int y = 0; y < height; y++) {
 
             String line = input.nextLine();
@@ -295,7 +284,7 @@ public class Agent {
         }
 
         if (tokens[0].equalsIgnoreCase("move-box")) {
-            return Character.toUpperCase(tokens[5].charAt(0));
+            return Character.toUpperCase(tokens[4].charAt(0));
         }
 
         throw new IllegalArgumentException(
@@ -356,34 +345,7 @@ public class Agent {
 
             for (Action action : plan.actions()) {
                 String actionString = problem.toShortString(action);
-                String[] tokens = actionString
-                        .replace("(", "")
-                        .replace(")", "")
-                        .trim()
-                        .split("\\s+");
-
-                char dir = 0;
-
-                for (int i = 1; i < tokens.length; i++) {
-                    String token = tokens[i];
-                    if (token.length() == 1
-                            && "udlr".indexOf(
-                            Character.toLowerCase(token.charAt(0))
-                    ) >= 0) {
-
-                        dir = Character.toUpperCase(token.charAt(0));
-                        break;
-                    }
-                }
-
-                if (dir == 0) {
-                    System.err.println(
-                            "[ERROR] Direction introuvable dans : "
-                                    + actionString
-                    );
-                    return null;
-                }
-                char direction = extractDirection(actionString);
+                char dir = extractDirection(actionString);
                 moves.append(dir);
                 System.err.println("[DEBUG] Action PDDL : " + actionString);
                 System.err.println("[DEBUG] Direction extraite : " + dir);

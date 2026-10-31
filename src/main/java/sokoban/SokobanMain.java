@@ -7,7 +7,7 @@ public class SokobanMain {
         //ProblemsGenerator.getAllProblems();
         SoloGameRunner gameRunner = new SoloGameRunner();
         gameRunner.setAgent(Agent.class);
-        gameRunner.setTestCase("test1.json");
+        gameRunner.setTestCase("test2.json");
 
         gameRunner.start();
     }
