@@ -1,22 +1,19 @@
-
 (define (domain Sokoban)
-
     (:requirements :strips :typing)
-
     (:types
         position
         direction
     )
 
     (:predicates
-        (adjacent ?from ?to - position ?d - direction)
-        (clear ?pos - position)
-        (guard-at ?pos - position)
-        (box-at ?pos - position)
+        (adjacent ?from ?to - position ?d - direction) ; True if position ?to is adjacent to position ?from
+        (clear ?pos - position) ;; True if position ?pos is clear (no box or guard)
+        (guard-at ?pos - position) ; True if guard is at ?pos
+        (box-at ?pos - position) ; position of the box
         (destination ?pos - position)
     )
 
-    ;; Déplacement simple du joueur
+    ;; Player move to another cell
     (:action move-player
         :parameters (?from ?to - position ?d - direction)
 
@@ -34,7 +31,7 @@
         )
     )
 
-    ;; Déplacement d'une boîte par le joueur
+    ;; Box move from the player to another cell
     (:action move-box
         :parameters (
             ?guard-from ?box-from ?box-to - position
@@ -50,15 +47,10 @@
         )
 
         :effect (and
-            ;; Le joueur avance sur l'ancienne position de la boîte
             (not (guard-at ?guard-from))
             (guard-at ?box-from)
-
-            ;; La boîte avance
             (not (box-at ?box-from))
             (box-at ?box-to)
-
-            ;; Mise à jour des cases libres
             (clear ?guard-from)
             (not (clear ?box-to))
         )
