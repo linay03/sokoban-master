@@ -18,8 +18,8 @@ import fr.uga.pddl4j.problem.operator.Action;
 
 public class Agent {
 
-    private static final String DOMAIN_FILE = "src/main/java/sokoban/domains/sokoban-domain.pddl";
-    private static final String PROBLEM_FILE = "src/main/java/sokoban/domains/sokoban-problem.pddl";
+    private static final String DOMAIN_FILE = "src/main/java/sokoban/planification/sokoban-domain.pddl";
+    private static final String PROBLEM_FILE = "src/main/java/sokoban/planification/sokoban-problem.pddl";
 
     private static final int PLANNER_TIMEOUT_SECONDS = 8;
     private static final double HEURISTIC_WEIGHT = 1.2;
@@ -45,9 +45,7 @@ public class Agent {
             System.out.flush();
             if (i + 1 < moves.length()) {
                 for (int k = 0; k <= boxCount; k++) {
-                    //x
                     input.nextInt();
-                    //y
                     input.nextInt();
                 }
             }

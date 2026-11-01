@@ -1,6 +1,8 @@
-Play the game on [CodinGame](https://www.codingame.com/training/hard/sokoban)
+# Projet Sokoban : TP 1
 
-Maven is needed.
+## Installation et lancement 
+
+Ce projet nécessite l'utilisation de la lib pddl4j.
 
 Install pddl4j (https://github.com/pellierd/pddl4j) in your local maven repo:
 ```
@@ -14,15 +16,24 @@ mvn install:install-file \
  ```  
 Work with maven: mvn clean, mvn compile, mvn test, mvn package
 
-Generate PDDL problem files for tests 1-10 from the repository root:
-NB : This command is optional since Agent.java will do the same task it self.
-```sh
-mvn -q -DskipTests compile
-java -cp target/classes sokoban.ProblemsGenerator
-```
-The files are written to `src/main/java/sokoban/problems/problem-testN.pddl`.
+### Pour lancer le projet : 
 
-Run with: 
+1. Saisir le fichier de test pour choisir le niveau souhaité dans `SokobanMain.java`.
+
+```java
+...
+gameRunner.setTestCase("test2.json");
+...
+```
+
+2. Pour chaque niveau, il faut dans le terminal, à la racine du projet, compiler le projet avec la commande suivante :
+
+```sh
+mvn compile
+```
+3. Entrer la commande suivante pour calculer le plan avec l'agent et démarrer le serveur pour la démonstration via interface.
+Le process permet d'écrire dans un fichier `src/main/java/sokoban/planification/sokoban-problem.pddl`.
+
 ````
 java --add-opens java.base/java.lang=ALL-UNNAMED \
       -server -Xms2048m -Xmx2048m \
@@ -36,6 +47,23 @@ java --add-opens java.base/java.lang=ALL-UNNAMED \
       -cp target/sokoban-1.0-SNAPSHOT-jar-with-dependencies.jar \
       sokoban.SokobanMain
 ```
-Sorry ```mvn exec:java``` has still an open issue ("Directory src/main/resources/view/assets not found.")
 
-See planning solutions at http://localhost:8888/test.html
+## Fichiers modifiés et crées 
+
+Après avoir repris le projet sokoban, nous avons intégré le planificateur PDDL4J pour permettre à l'agent de calculer un plan.
+Un nouveau dossier `/planification` a été créé pour les fichiers PDDL.
+
+Nous avons modifiés les fichiers suivants dans le projet :
+
+| Fichier | Description |
+|---|---|
+| `src/main/java/sokoban/Agent.java` | Génère le fichier problem PDDL correspondant, puis calcule un plan. Les actions du plan sont converties en commandes de déplacement (`U`, `D`, `L`, `R`) et transmises au jeu. |
+| `src/main/java/sokoban/domains/sokoban-domain.pddl` | Définit le domaine de planification de Sokoban |
+| `src/main/java/sokoban/Referee.java` | Temps maximal accordé au premier tour à 25 secondes. Cela a été changé pour certains tests qui prenaient beaucoup de temps à calculer le plan. |
+| `pom.xml` | Ajout de la dépendance Javassist afin de permettre l'utilisation du planificateur car problème lors de la compilation. |
+
+### Fichiers créés
+
+| Fichier | Description |
+|---|---|
+| `src/main/java/sokoban/domains/sokoban-problem.pddl` | Fichier de problème PDDL généré lors du lancement du niveau actuel. |f. |
