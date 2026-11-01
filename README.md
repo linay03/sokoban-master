@@ -14,13 +14,23 @@ mvn install:install-file \
  ```  
 Work with maven: mvn clean, mvn compile, mvn test, mvn package
 
-Generate PDDL problem files for tests 1-10 from the repository root:
-NB : This command is optional since Agent.java will do the same task it self.
-```sh
-mvn -q -DskipTests compile
-java -cp target/classes sokoban.ProblemsGenerator
+To lunch the project:
+
+1. Enter the level file you want to test in the SokobanMain.java file.
+
+You just need to modify the string in the setTestCase methode call at line 10.
+```java
+...
+gameRunner.setTestCase("test2.json");
+...
 ```
-The files are written to `src/main/java/sokoban/problems/problem-testN.pddl`.
+
+2. On your terminal from the root of the project compile it with this command :
+```sh
+mvn compile
+```
+3. Run the next command to make the agent compute the plan and start the server to serve visual demonstration.
+This process writes a problem file to `src/main/java/sokoban/planification/sokoban-problem.pddl`.
 
 Run with: 
 ````
@@ -38,4 +48,4 @@ java --add-opens java.base/java.lang=ALL-UNNAMED \
 ```
 Sorry ```mvn exec:java``` has still an open issue ("Directory src/main/resources/view/assets not found.")
 
-See planning solutions at http://localhost:8888/test.html
+4. See planning solutions at http://localhost:8888/test.html
