@@ -45,9 +45,7 @@ public class Agent {
             System.out.flush();
             if (i + 1 < moves.length()) {
                 for (int k = 0; k <= boxCount; k++) {
-                    //x
                     input.nextInt();
-                    //y
                     input.nextInt();
                 }
             }
